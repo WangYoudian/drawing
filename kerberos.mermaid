@@ -1,0 +1,10 @@
+flowchart TD
+    A[Enter Staff ID] --> B[Enter Password]
+    B --> C[Login]
+    C --> D[LDAP Authentication]
+    D --> E{Valid?}
+    E -- Yes --> F[Encrypt password into session]
+    F --> G[Store encrypted key in session cache]
+    G --> H[Response Returned]
+    E -- No --> I[Invalid Username or Password]
+    I --> J[Return Error]
