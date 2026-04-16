@@ -1,0 +1,20 @@
+sequenceDiagram
+    participant User
+    participant DSW
+    participant Vault
+    participant KDC
+    User->>DSW: Login (LDAP)
+    DSW->>Vault: Store encrypted credential
+    DSW-->>User: Login success
+    User->>DSW: Create notebook
+    DSW->>Vault: Retrieve & decrypt credential
+    DSW->>KDC: kinit (obtain ticket)
+    KDC-->>DSW: Ticket
+    loop Ticket monitoring
+        DSW->>KDC: Check expiry
+        alt Expiring soon
+            DSW->>Vault: Get credential
+            DSW->>KDC: Renew ticket
+        end
+    end
+    DSW-->>User: Access data lake
