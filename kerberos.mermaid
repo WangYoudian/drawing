@@ -1,10 +1,33 @@
-flowchart TD
-    A[Enter Staff ID] --> B[Enter Password]
-    B --> C[Login]
-    C --> D[LDAP Authentication]
-    D --> E{Valid?}
-    E -- Yes --> F[Encrypt password into session]
-    F --> G[Store encrypted key in session cache]
-    G --> H[Response Returned]
-    E -- No --> I[Invalid Username or Password]
-    I --> J[Return Error]
+flowchart LR
+    A[🔐 Login FC DSW on Prem] --> B[👤 Enter Username and Password]
+    B --> C[🔍 LDAP Authentication]
+    C --> D{✅ Valid?}
+    
+    D -- Yes --> E[🔁 Store encrypted credential into Hashicorp Vault]
+    E --> F[✅ Return Login Success]
+    F --> G[📓 User create Jupyter Notebook on FC DSW on Prem]
+    
+    D -- No --> H[❌ Invalid Username or Password]
+    H --> I[⚠️ Return Error]
+    
+    G --> J[🔑 Application retrieve encrypted credential from Hashicorp Vault]
+    J --> K[🎫 Apply for Kerberos ticket from KDC automatically]
+    K --> L{⏳ Kerberos Ticket Expired?}
+    
+    L -- Yes --> M[🔄 Renew Kerberos ticket automatically]
+    M --> N[📡 User access Hadoop Cluster with valid Kerberos authentication]
+    
+    L -- No --> N
+    
+    N --> L
+
+    classDef input fill:#d4f1f9,stroke:#0077b6,stroke-width:2px,color:#000;
+    classDef process fill:#fff3cd,stroke:#ffc107,stroke-width:2px;
+    classDef decision fill:#ffe5b4,stroke:#f4a261,stroke-width:2px,shape:rhombus;
+    classDef error fill:#ffcccc,stroke:#d9534f,stroke-width:2px;
+    classDef success fill:#d4edda,stroke:#28a745,stroke-width:2px;
+    
+    class A,B,C input;
+    class D,L decision;
+    class H,I error;
+    class E,F,G,J,K,M,N success;
